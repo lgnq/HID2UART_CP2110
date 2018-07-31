@@ -45,8 +45,6 @@ class MainWidget(QWidget):
         
         self.list = QComboBox()  #下拉列表
 
-        self.infoLabel = QLabel("None")
-
         self.openButton = QPushButton("Open")
         self.openButton.clicked.connect(self.device_open)
         
@@ -56,7 +54,6 @@ class MainWidget(QWidget):
         layout_list = QHBoxLayout()
 
         layout_list.addWidget(self.list)
-        layout_list.addWidget(self.infoLabel)
         layout_list.addWidget(self.openButton)
         layout_list.addWidget(self.rxClear)
 
@@ -80,9 +77,7 @@ class MainWidget(QWidget):
 
         filter = hid.HidDeviceFilter()
         self.all_devices = filter.get_devices()
-        string = " Device No.: {0:d}".format(len(self.all_devices))
-        self.infoLabel.setText(string) 
-        
+
         temp = 0
         for i in self.all_devices:
             id_information = "vId= 0x{0:04X}, pId= 0x{1:04X}, ppId= 0x{2:04X}".format(i.vendor_id, i.product_id, i.parent_instance_id)
