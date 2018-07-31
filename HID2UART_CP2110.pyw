@@ -43,7 +43,15 @@ class MainWidget(QWidget):
         
         self.queue = queue.Queue()  #创建队列
         
+        self.device_label = QLabel("Device List:")
         self.list = QComboBox()  #下拉列表
+
+        self.baudrate_label = QLabel("Baudrate:")
+        self.baudrate_list = QComboBox()
+        self.baudrate_list.addItem("9600")
+        self.baudrate_list.addItem("38400")
+        self.baudrate_list.addItem("115200")
+
 
         self.openButton = QPushButton("Open")
         self.openButton.clicked.connect(self.device_open)
@@ -53,7 +61,10 @@ class MainWidget(QWidget):
 
         layout_list = QHBoxLayout()
 
+        layout_list.addWidget(self.device_label)
         layout_list.addWidget(self.list)
+        layout_list.addWidget(self.baudrate_label)
+        layout_list.addWidget(self.baudrate_list)
         layout_list.addWidget(self.openButton)
         layout_list.addWidget(self.rxClear)
 
@@ -194,7 +205,7 @@ class MainWidget(QWidget):
         print(self.list.currentIndex(), ":", self.list.currentText())
         
 if __name__ == '__main__':
-    app =  QApplication(sys.argv)
+    app = QApplication(sys.argv)
 
     widget = MainWidget()
 
