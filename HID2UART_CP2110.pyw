@@ -51,7 +51,7 @@ class MainWidget(QWidget):
         self.baudrate_list.addItem("9600")
         self.baudrate_list.addItem("38400")
         self.baudrate_list.addItem("115200")
-
+        self.baudrate_list.currentIndexChanged.connect(self.baudrate_change)
 
         self.openButton = QPushButton("Open")
         self.openButton.clicked.connect(self.device_open)
@@ -143,7 +143,10 @@ class MainWidget(QWidget):
     def closeEvent(self, event):
         print("Close event")
         self.HIDDevice.close()
-        
+
+    def baudrate_change(self):
+        print(self.baudrate_list.currentIndex())
+
     def device_change(self):
         self.currentDevice = self.list.currentIndex() #获取当前设备索引号
         
