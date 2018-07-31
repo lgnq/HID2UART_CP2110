@@ -105,16 +105,12 @@ class MainWidget(QWidget):
         if self.all_devices:
             self.HIDDevice = self.all_devices[self.currentDevice]
             
-        self.list.currentIndexChanged.connect(self.itemChanged)
         self.list.currentIndexChanged.connect(self.device_change)
         
         self.thread = Thread(self.queue_monitor)
         self.thread.msg_ready.connect(self.rxTextBrowserUpdate)
         self.thread.start()
 
-        self.setWindowTitle(u"PyQt USBHID Assist")
-        # self.setWindowIcon( QIcon("penguin.ico"))
-        
     def queue_monitor(self):
         if self.queue.qsize():
             try:
@@ -201,12 +197,6 @@ class MainWidget(QWidget):
 
             self.openButton.setText("Close")
 
-    def print2TextBrowser(self, string):
-        self.rxLine.insertPlainText(string)
-
-    def itemChanged(self):
-        print(self.list.currentIndex(), ":", self.list.currentText())
-        
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
