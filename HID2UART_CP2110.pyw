@@ -168,6 +168,23 @@ class MainWidget(QWidget):
         feature.send()
         # print(feature.get(False))
 
+    def uart_config(self, feature, baudrate):
+        buff    = [0x00] * 64
+        buff[0] = 0x50 # Report ID = 0x41 Get/Set UART Enable
+
+        buff[1] = 0x0
+        buff[2] = 0x0
+        buff[3] = 0x25
+        buff[4] = 0x80
+
+        buff[5] = 0x0
+        buff[6] = 0x0
+        buff[7] = 0x3
+        buff[8] = 0x0
+
+        feature.set_raw_data(buff)
+        feature.send()
+
     def device_open(self):
         # 与之前选择的设备相同 
         if self.previewDevice == self.currentDevice:
@@ -185,7 +202,7 @@ class MainWidget(QWidget):
                 # in_reports   = self.HIDDevice.find_input_reports()
 
                 self.uart_onoff(self.feature_report[1], 1)
-
+                # self.uart_config(self.feature_report[15], 9600)
 
                 for i in self.feature_report:
                     print(i.get(False))
@@ -213,6 +230,7 @@ class MainWidget(QWidget):
             # in_reports   = self.HIDDevice.find_input_reports()
             
             self.uart_onoff(self.feature_report[1], 1)
+            # self.uart_config(self.feature_report[15], 9600)
 
             for i in self.feature_report:
                 print(i)
