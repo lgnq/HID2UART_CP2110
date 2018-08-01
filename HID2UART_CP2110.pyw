@@ -168,7 +168,11 @@ class MainWidget(QWidget):
                 self.HIDDevice.open()
                 self.HIDDevice.set_raw_data_handler(self.report_recv_handler)
                 self.reports = self.HIDDevice.find_output_reports()
+                self.feature_report = self.HIDDevice.find_feature_reports()
                 # in_reports   = self.HIDDevice.find_input_reports()
+
+                for i in self.feature_report:
+                    print(i.get(False))
                 
                 for i in self.reports:
                     self.out_reports_id_list.append(i.report_id)
@@ -188,8 +192,14 @@ class MainWidget(QWidget):
             print(self.HIDDevice, "Opened")
             self.HIDDevice.set_raw_data_handler(self.report_recv_handler)
             self.reports = self.HIDDevice.find_output_reports()
+            self.feature_report = self.HIDDevice.find_feature_reports()
+
             # in_reports   = self.HIDDevice.find_input_reports()
             
+            for i in self.feature_report:
+                print(i)
+                print(i.get(False))
+
             for i in self.reports:
                 self.out_reports_id_list.append(i.report_id)
 
