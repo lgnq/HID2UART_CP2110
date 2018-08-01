@@ -154,7 +154,20 @@ class MainWidget(QWidget):
                 self.openButton.setText("Close")
             else:
                 self.openButton.setText("Open")
-            
+
+    def uart_onoff(self, feature, onoff):
+        buff    = [0x00] * 64
+        buff[0] = 0x41 # Report ID = 0x41 Get/Set UART Enable
+
+        if (onoff == 1):
+            buff[1] = 0x1  # UART enable
+        else:
+            buff[1] = 0x0  # UART disable
+
+        feature.set_raw_data(buff)
+        feature.send()
+        # print(feature.get(False))
+
     def device_open(self):
         # 与之前选择的设备相同 
         if self.previewDevice == self.currentDevice:
@@ -170,6 +183,9 @@ class MainWidget(QWidget):
                 self.reports = self.HIDDevice.find_output_reports()
                 self.feature_report = self.HIDDevice.find_feature_reports()
                 # in_reports   = self.HIDDevice.find_input_reports()
+
+                self.uart_onoff(self.feature_report[1], 1)
+
 
                 for i in self.feature_report:
                     print(i.get(False))
@@ -196,6 +212,8 @@ class MainWidget(QWidget):
 
             # in_reports   = self.HIDDevice.find_input_reports()
             
+            self.uart_onoff(self.feature_report[1], 1)
+
             for i in self.feature_report:
                 print(i)
                 print(i.get(False))
