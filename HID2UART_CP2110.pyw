@@ -145,16 +145,6 @@ class MainWidget(QWidget):
 
         if (self.HIDDevice.is_opened()):
             self.uart_config(self.baudrate_list.currentIndex())
-            
-            # if self.baudrate_list.currentIndex() == 0:
-            #     print("9600")
-            #     self.uart_config(9600)
-            # elif self.baudrate_list.currentIndex() == 1:
-            #     print("38400")
-            #     self.uart_config(38400)
-            # elif self.baudrate_list.currentIndex() == 2:
-            #     print("115200")
-            #     self.uart_config(115200)
 
     def device_change(self):
         self.currentDevice = self.list.currentIndex() #获取当前设备索引号
