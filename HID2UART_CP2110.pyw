@@ -8,6 +8,7 @@ import PyQt5
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QComboBox, QTextBrowser, QScrollBar, QHBoxLayout, QVBoxLayout
+from PyQt5.QtGui import QFont
 
 import pywinusb.hid as hid
 
@@ -71,6 +72,8 @@ class MainWidget(QWidget):
         layout_list.addStretch()
         
         self.rxLine = QTextBrowser()
+        self.rxLine.setFont(QFont("Consolas", 10))
+        # self.rxLine.setFont(QFont("Courier New", 10))
 
         self.bar    = QScrollBar()
         self.bar    = self.rxLine.verticalScrollBar()
