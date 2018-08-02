@@ -158,7 +158,7 @@ class MainWidget(QWidget):
             else:
                 self.openButton.setText("Open")
 
-    def uart_onoff(self, feature, onoff):
+    def uart_onoff(self, onoff):
         buff    = [0x00] * 64
         buff[0] = 0x41 # Report ID = 0x41 Get/Set UART Enable
 
@@ -167,9 +167,7 @@ class MainWidget(QWidget):
         else:
             buff[1] = 0x0  # UART disable
 
-        feature.set_raw_data(buff)
-        feature.send()
-        # print(feature.get(False))
+        self.HIDDevice.send_feature_report(buff)
 
     def uart_config(self, baudrate):
         buff    = [0x00] * 64
@@ -203,7 +201,7 @@ class MainWidget(QWidget):
                 self.feature_report = self.HIDDevice.find_feature_reports()
                 # in_reports   = self.HIDDevice.find_input_reports()
 
-                self.uart_onoff(self.feature_report[1], 1)
+                self.uart_onoff(1)
                 # self.HIDDevice.send_feature_report((c_ubyte * 64)(80, 0, 0, 25, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
                 self.uart_config(9600)
 
@@ -232,7 +230,7 @@ class MainWidget(QWidget):
 
             # in_reports   = self.HIDDevice.find_input_reports()
             
-            self.uart_onoff(self.feature_report[1], 1)
+            self.uart_onoff(1)
             self.uart_config(9600)
             # self.HIDDevice.send_feature_report((c_ubyte * 64)(80, 0, 0, 25, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
