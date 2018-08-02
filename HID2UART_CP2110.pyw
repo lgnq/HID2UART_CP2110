@@ -143,6 +143,19 @@ class MainWidget(QWidget):
     def baudrate_change(self):
         print(self.baudrate_list.currentIndex())
 
+        if (self.HIDDevice.is_opened()):
+            self.uart_config(self.baudrate_list.currentIndex())
+            
+            # if self.baudrate_list.currentIndex() == 0:
+            #     print("9600")
+            #     self.uart_config(9600)
+            # elif self.baudrate_list.currentIndex() == 1:
+            #     print("38400")
+            #     self.uart_config(38400)
+            # elif self.baudrate_list.currentIndex() == 2:
+            #     print("115200")
+            #     self.uart_config(115200)
+
     def device_change(self):
         self.currentDevice = self.list.currentIndex() #获取当前设备索引号
         
@@ -166,14 +179,30 @@ class MainWidget(QWidget):
 
         self.HIDDevice.send_feature_report(buff)
 
-    def uart_config(self, baudrate):
+    def uart_config(self, baudrate_idx):
         buff    = [0x00] * 64
         buff[0] = 0x50 # Report ID = 0x41 Get/Set UART Enable
 
-        buff[1] = 0x0
-        buff[2] = 0x0
-        buff[3] = 0x25
-        buff[4] = 0x80
+        if baudrate_idx == 0:   #9600
+            buff[1] = 0x0
+            buff[2] = 0x0
+            buff[3] = 0x25
+            buff[4] = 0x80
+        elif baudrate_idx == 1: #38400    
+            buff[1] = 0x0
+            buff[2] = 0x0
+            buff[3] = 0x96
+            buff[4] = 0x00
+        elif baudrate_idx == 2: #115200    
+            buff[1] = 0x0
+            buff[2] = 0x01
+            buff[3] = 0xC2
+            buff[4] = 0x00
+        else:                   #9600
+            buff[1] = 0x0
+            buff[2] = 0x0
+            buff[3] = 0x25
+            buff[4] = 0x80                
 
         buff[5] = 0x0
         buff[6] = 0x0
@@ -199,7 +228,7 @@ class MainWidget(QWidget):
                 # in_reports   = self.HIDDevice.find_input_reports()
 
                 self.uart_onoff(1)
-                self.uart_config(9600)
+                self.uart_config(self.baudrate_list.currentIndex())
 
                 # for i in self.feature_report:
                 #     print(i.get(False))
@@ -227,7 +256,7 @@ class MainWidget(QWidget):
             # in_reports   = self.HIDDevice.find_input_reports()
             
             self.uart_onoff(1)
-            self.uart_config(9600)
+            self.uart_config(self.baudrate_list.currentIndex())
 
             # for i in self.feature_report:
             #     print(i)
