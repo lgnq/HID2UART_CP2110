@@ -132,12 +132,18 @@ class MainWidget(QWidget):
         self.HIDDevice.close()
 
     def baudrate_change(self):
-        print(self.baudrate_list.currentIndex())
+        if self.list.count() == 0:
+            self.inputTips.setText("Info: " + "no CP2110 device detected!")
+            return
 
         if (self.HIDDevice.is_opened()):
             self.uart_config(self.baudrate_list.currentIndex())
 
     def device_change(self):
+        if self.list.count() == 0:
+            self.inputTips.setText("Info: " + "no CP2110 device detected!")
+            return
+
         self.currentDevice = self.list.currentIndex() #获取当前设备索引号
         
         if self.previewDevice != self.currentDevice:
@@ -193,6 +199,10 @@ class MainWidget(QWidget):
         self.HIDDevice.send_feature_report(buff)
 
     def device_open(self):
+        if self.list.count() == 0:
+            self.inputTips.setText("Info: " + "no CP2110 device detected!")
+            return
+
         # 与之前选择的设备相同 
         if self.previewDevice == self.currentDevice:
             if self.HIDDevice.is_opened():
