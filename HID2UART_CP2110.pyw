@@ -86,21 +86,12 @@ class MainWidget(QWidget):
         
         self.setLayout(layout)
 
-        filter = hid.HidDeviceFilter()
-        self.all_devices = filter.get_devices()
+        devicefilter = hid.HidDeviceFilter(vendor_id=0x10C4, product_id=0xEA80)
+        self.all_devices = devicefilter.get_devices()
 
-        temp = 0
         for i in self.all_devices:
             id_information = "vId= 0x{0:04X}, pId= 0x{1:04X}, ppId= 0x{2:04X}".format(i.vendor_id, i.product_id, i.parent_instance_id)
             self.list.addItem(id_information)
-            
-            #select CP2110 if it existed
-            if i.vendor_id == 0x10C4 and i.product_id == 0xEA80:
-                self.list.setCurrentIndex = temp
-                self.list.setItemText
-                self.currentDevice = temp
-        
-            temp = temp + 1
 
         if self.all_devices:
             self.HIDDevice = self.all_devices[self.currentDevice]
@@ -264,7 +255,7 @@ if __name__ == '__main__':
 
     widget = MainWidget()
 
-    widget.setWindowTitle("CP2110")
+    widget.setWindowTitle("CP2110 HID USB-to-UART")
     widget.setGeometry(400, 300, 800, 600)
     widget.show()
 
