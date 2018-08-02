@@ -44,7 +44,7 @@ class MainWidget(QWidget):
         self.queue = queue.Queue()  #创建队列
         
         self.device_label = QLabel("Device List:")
-        self.list = QComboBox()  #下拉列表
+        self.device_list = QComboBox()  #下拉列表
 
         self.baudrate_label = QLabel("Baudrate:")
         self.baudrate_list = QComboBox()
@@ -62,7 +62,7 @@ class MainWidget(QWidget):
         layout_list = QHBoxLayout()
 
         layout_list.addWidget(self.device_label)
-        layout_list.addWidget(self.list)
+        layout_list.addWidget(self.device_list)
         layout_list.addWidget(self.baudrate_label)
         layout_list.addWidget(self.baudrate_list)
         layout_list.addWidget(self.openButton)
@@ -91,12 +91,12 @@ class MainWidget(QWidget):
 
         for i in self.all_devices:
             id_information = "vId= 0x{0:04X}, pId= 0x{1:04X}, ppId= 0x{2:04X}".format(i.vendor_id, i.product_id, i.parent_instance_id)
-            self.list.addItem(id_information)
+            self.device_list.addItem(id_information)
 
         if self.all_devices:
             self.HIDDevice = self.all_devices[self.currentDevice]
             
-        self.list.currentIndexChanged.connect(self.device_change)
+        self.device_list.currentIndexChanged.connect(self.device_change)
         
         self.thread = Thread(self.queue_monitor)
         self.thread.msg_ready.connect(self.rxTextBrowserUpdate)
@@ -132,7 +132,7 @@ class MainWidget(QWidget):
         self.HIDDevice.close()
 
     def baudrate_change(self):
-        if self.list.count() == 0:
+        if self.device_list.count() == 0:
             self.inputTips.setText("Info: " + "no CP2110 device detected!")
             return
 
@@ -140,11 +140,11 @@ class MainWidget(QWidget):
             self.uart_config(self.baudrate_list.currentIndex())
 
     def device_change(self):
-        if self.list.count() == 0:
+        if self.device_list.count() == 0:
             self.inputTips.setText("Info: " + "no CP2110 device detected!")
             return
 
-        self.currentDevice = self.list.currentIndex() #获取当前设备索引号
+        self.currentDevice = self.device_list.currentIndex() #获取当前设备索引号
         
         if self.previewDevice != self.currentDevice:
             self.openButton.setText("Open")
@@ -199,7 +199,7 @@ class MainWidget(QWidget):
         self.HIDDevice.send_feature_report(buff)
 
     def device_open(self):
-        if self.list.count() == 0:
+        if self.device_list.count() == 0:
             self.inputTips.setText("Info: " + "no CP2110 device detected!")
             return
 
