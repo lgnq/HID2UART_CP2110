@@ -201,8 +201,8 @@ class MainWidget(QWidget):
                 self.uart_onoff(1)
                 self.uart_config(9600)
 
-                for i in self.feature_report:
-                    print(i.get(False))
+                # for i in self.feature_report:
+                #     print(i.get(False))
                 
                 for i in self.reports:
                     self.out_reports_id_list.append(i.report_id)
@@ -229,9 +229,9 @@ class MainWidget(QWidget):
             self.uart_onoff(1)
             self.uart_config(9600)
 
-            for i in self.feature_report:
-                print(i)
-                print(i.get(False))
+            # for i in self.feature_report:
+            #     print(i)
+            #     print(i.get(False))
 
             for i in self.reports:
                 self.out_reports_id_list.append(i.report_id)
