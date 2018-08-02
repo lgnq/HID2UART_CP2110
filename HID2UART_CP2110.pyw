@@ -4,9 +4,6 @@
 import sys
 import queue
 
-import ctypes
-from ctypes import c_ubyte
-
 import PyQt5
 from PyQt5 import QtCore
 from PyQt5 import QtGui
@@ -202,7 +199,6 @@ class MainWidget(QWidget):
                 # in_reports   = self.HIDDevice.find_input_reports()
 
                 self.uart_onoff(1)
-                # self.HIDDevice.send_feature_report((c_ubyte * 64)(80, 0, 0, 25, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
                 self.uart_config(9600)
 
                 for i in self.feature_report:
@@ -232,7 +228,6 @@ class MainWidget(QWidget):
             
             self.uart_onoff(1)
             self.uart_config(9600)
-            # self.HIDDevice.send_feature_report((c_ubyte * 64)(80, 0, 0, 25, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
             for i in self.feature_report:
                 print(i)
