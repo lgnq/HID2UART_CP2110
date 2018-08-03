@@ -41,7 +41,8 @@ class MainWidget(QWidget):
         self.queue = queue.Queue()  # 创建队列
         
         self.device_label = QLabel("Device List:")
-        self.device_combobox = QComboBox()  #下拉列表
+        self.device_combobox = QComboBox()
+        self.device_scan()
 
         self.baudrate_label = QLabel("Baudrate:")
         self.baudrate_combobox = QComboBox()
@@ -85,17 +86,6 @@ class MainWidget(QWidget):
         layout.addWidget(self.status_label)
         
         self.setLayout(layout)
-
-        self.all_devices = hid.HidDeviceFilter(vendor_id=0x10C4, product_id=0xEA80).get_devices()
-
-        for i in self.all_devices:
-            id_information = "vId= 0x{0:04X}, pId= 0x{1:04X}, ppId= 0x{2:04X}".format(i.vendor_id, i.product_id, i.parent_instance_id)
-            self.device_combobox.addItem(id_information)
-
-        if self.all_devices:
-            self.hid_device = self.all_devices[self.current_device]
-            
-        self.device_combobox.currentIndexChanged.connect(self.device_change)
         
         self.thread = Thread(self.queue_monitor)
         self.thread.msg_ready.connect(self.rx_textbrowser_update)
@@ -135,6 +125,8 @@ class MainWidget(QWidget):
             self.uart_config(self.baudrate_combobox.currentIndex())
 
     def device_change(self):
+        print("device_change")
+
         if self.device_combobox.count() == 0:
             self.status_label.setText("Status: " + "no CP2110 device detected!")
             return
@@ -192,6 +184,20 @@ class MainWidget(QWidget):
         buff[8] = 0x0
 
         self.hid_device.send_feature_report(buff)
+
+    def device_scan(self):
+        self.device_combobox.__init__()
+
+        self.all_devices = hid.HidDeviceFilter(vendor_id=0x10C4, product_id=0xEA80).get_devices()
+
+        for i in self.all_devices:
+            id_information = "vId= 0x{0:04X}, pId= 0x{1:04X}, ppId= 0x{2:04X}".format(i.vendor_id, i.product_id, i.parent_instance_id)
+            self.device_combobox.addItem(id_information)
+
+        if self.all_devices:
+            self.hid_device = self.all_devices[self.current_device]
+
+        self.device_combobox.currentIndexChanged.connect(self.device_change)
 
     def device_openclose(self):
         if self.device_combobox.count() == 0:
@@ -272,7 +278,7 @@ class App(QMainWindow):
         scanButton = QAction('Scan', self)
         scanButton.setShortcut('Ctrl+S')
         scanButton.setStatusTip('Scan devices')
-        scanButton.triggered.connect(self.close)
+        scanButton.triggered.connect(self.scan)
         fileMenu.addAction(scanButton)
 
         exitButton = QAction('Exit', self)
@@ -295,6 +301,9 @@ class App(QMainWindow):
 
     def about(self):
         QMessageBox.question(self, 'About', "CP2110 USB-to-UART\r\nVersion: 1.0\r\nAuthor: lgnq", QMessageBox.Ok, QMessageBox.Ok)
+
+    def scan(self):
+        self.widget.device_scan()    
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
