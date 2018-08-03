@@ -53,10 +53,10 @@ class MainWidget(QWidget):
 
         self.open_pushbutton = QPushButton("Open")
         # self.open_pushbutton.setToolTip('Open/Close the CP2110')
-        self.open_pushbutton.clicked.connect(self.device_open)
+        self.open_pushbutton.clicked.connect(self.device_openclose)
         
         self.clear_pushbutton = QPushButton("Clear")
-        self.clear_pushbutton.clicked.connect(self.clearRxBrowser)
+        self.clear_pushbutton.clicked.connect(self.rx_textbrowser_clear)
 
         layout_list = QHBoxLayout()
 
@@ -73,11 +73,11 @@ class MainWidget(QWidget):
         self.rx_textbrowser.setFont(QFont("Consolas", 10))
         # self.rx_textbrowser.setFont(QFont("Courier New", 10))
 
-        self.bar    = QScrollBar()
-        self.bar    = self.rx_textbrowser.verticalScrollBar()
+        self.bar = QScrollBar()
+        self.bar = self.rx_textbrowser.verticalScrollBar()
         self.bar.setValue(self.bar.maximum());
 
-        self.status_label = QLabel("Info:")
+        self.status_label = QLabel("Status:")
         
         layout = QVBoxLayout()
 
@@ -100,7 +100,7 @@ class MainWidget(QWidget):
         self.device_combobox.currentIndexChanged.connect(self.device_change)
         
         self.thread = Thread(self.queue_monitor)
-        self.thread.msg_ready.connect(self.rxTextBrowserUpdate)
+        self.thread.msg_ready.connect(self.rx_textbrowser_update)
         self.thread.start()
 
     def queue_monitor(self):
@@ -113,7 +113,7 @@ class MainWidget(QWidget):
                 pass
 
     string = ""
-    def rxTextBrowserUpdate(self, item):
+    def rx_textbrowser_update(self, item):
         if (item[0] == 1):
             if (item[1] == 10):
                 self.rx_textbrowser.append(self.string)
@@ -125,7 +125,7 @@ class MainWidget(QWidget):
     def report_recv_handler(self, data):
         self.queue.put(data)
         
-    def clearRxBrowser(self):
+    def rx_textbrowser_clear(self):
         self.rx_textbrowser.clear()
         
     def closeEvent(self, event):
@@ -134,7 +134,7 @@ class MainWidget(QWidget):
 
     def baudrate_change(self):
         if self.device_combobox.count() == 0:
-            self.status_label.setText("Info: " + "no CP2110 device detected!")
+            self.status_label.setText("Status: " + "no CP2110 device detected!")
             return
 
         if (self.HIDDevice.is_opened()):
@@ -142,14 +142,14 @@ class MainWidget(QWidget):
 
     def device_change(self):
         if self.device_combobox.count() == 0:
-            self.status_label.setText("Info: " + "no CP2110 device detected!")
+            self.status_label.setText("Status: " + "no CP2110 device detected!")
             return
 
         self.currentDevice = self.device_combobox.currentIndex() #获取当前设备索引号
         
         if self.previewDevice != self.currentDevice:
             self.open_pushbutton.setText("Open")
-            self.status_label.setText("Info: ")
+            self.status_label.setText("Status: ")
         else: 
             if self.HIDDevice.is_opened():
                 self.open_pushbutton.setText("Close")
@@ -199,9 +199,9 @@ class MainWidget(QWidget):
 
         self.HIDDevice.send_feature_report(buff)
 
-    def device_open(self):
+    def device_openclose(self):
         if self.device_combobox.count() == 0:
-            self.status_label.setText("Info: " + "no CP2110 device detected!")
+            self.status_label.setText("Status: " + "no CP2110 device detected!")
             return
 
         # 与之前选择的设备相同 
@@ -211,7 +211,7 @@ class MainWidget(QWidget):
                 self.out_reports_id_list = []
                 self.open_pushbutton.setText("Open")
                 print(self.HIDDevice, "Closed")
-                self.status_label.setText("Info: ")
+                self.status_label.setText("Status: ")
             else:
                 self.HIDDevice.open()
                 self.HIDDevice.set_raw_data_handler(self.report_recv_handler)
@@ -228,7 +228,7 @@ class MainWidget(QWidget):
                 for i in self.reports:
                     self.out_reports_id_list.append(i.report_id)
                 
-                self.status_label.setText("Info: " + self.HIDDevice.product_name + " " + self.HIDDevice.vendor_name + " " + self.HIDDevice.serial_number)
+                self.status_label.setText("Status: " + self.HIDDevice.product_name + " " + self.HIDDevice.vendor_name + " " + self.HIDDevice.serial_number)
                 print(self.HIDDevice, "opend")
                 
                 self.open_pushbutton.setText("Close")
@@ -257,7 +257,7 @@ class MainWidget(QWidget):
             for i in self.reports:
                 self.out_reports_id_list.append(i.report_id)
 
-            self.status_label.setText("Info: " + self.HIDDevice.product_name + " " + self.HIDDevice.vendor_name + " " + self.HIDDevice.serial_number)
+            self.status_label.setText("Status: " + self.HIDDevice.product_name + " " + self.HIDDevice.vendor_name + " " + self.HIDDevice.serial_number)
 
             self.open_pushbutton.setText("Close")
 
