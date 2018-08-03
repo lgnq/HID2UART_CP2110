@@ -37,7 +37,6 @@ class MainWidget(QWidget):
         self.previewDevice = 0   # 之前设备编号
 
         self.HIDDevice = None    # 设备
-        self.out_reports_id_list = []
         
         self.queue = queue.Queue()  #创建队列
         
@@ -208,7 +207,6 @@ class MainWidget(QWidget):
         if self.previewDevice == self.currentDevice:
             if self.HIDDevice.is_opened():
                 self.HIDDevice.close()
-                self.out_reports_id_list = []
                 self.open_pushbutton.setText("Open")
                 print(self.HIDDevice, "Closed")
                 self.status_label.setText("Status: ")
@@ -225,16 +223,12 @@ class MainWidget(QWidget):
                 # for i in self.feature_report:
                 #     print(i.get(False))
                 
-                for i in self.reports:
-                    self.out_reports_id_list.append(i.report_id)
-                
                 self.status_label.setText("Status: " + self.HIDDevice.product_name + " " + self.HIDDevice.vendor_name + " " + self.HIDDevice.serial_number)
                 print(self.HIDDevice, "opend")
                 
                 self.open_pushbutton.setText("Close")
         else:
             self.HIDDevice.close()
-            self.out_reports_id_list = []
             print(self.HIDDevice, "Closed")
 
             self.HIDDevice = self.all_devices[self.currentDevice]
@@ -253,9 +247,6 @@ class MainWidget(QWidget):
             # for i in self.feature_report:
             #     print(i)
             #     print(i.get(False))
-
-            for i in self.reports:
-                self.out_reports_id_list.append(i.report_id)
 
             self.status_label.setText("Status: " + self.HIDDevice.product_name + " " + self.HIDDevice.vendor_name + " " + self.HIDDevice.serial_number)
 
