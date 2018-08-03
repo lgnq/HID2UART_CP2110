@@ -308,7 +308,7 @@ class App(QMainWindow):
         self.show()
 
     def about(self):
-        buttonReply = QMessageBox.question(self, 'About', "CP2110 USB-to-UART\r\nVersion: 1.0\r\nAuthor: lgnq", QMessageBox.Ok, QMessageBox.Ok)
+        QMessageBox.question(self, 'About', "CP2110 USB-to-UART\r\nVersion: 1.0\r\nAuthor: lgnq", QMessageBox.Ok, QMessageBox.Ok)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
