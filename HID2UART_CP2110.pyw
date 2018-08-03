@@ -126,10 +126,6 @@ class MainWidget(QWidget):
     def rx_textbrowser_clear(self):
         self.rx_textbrowser.clear()
         
-    def closeEvent(self, event):
-        print("Close event")
-        self.hid_device.close()
-
     def baudrate_change(self):
         if self.device_combobox.count() == 0:
             self.status_label.setText("Status: " + "no CP2110 device detected!")
