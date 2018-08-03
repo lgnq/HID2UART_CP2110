@@ -1,4 +1,4 @@
-# coding:utf-8
+﻿# coding:utf-8
 #/usr/bin/python
 
 import sys
@@ -6,7 +6,7 @@ import queue
 
 from PyQt5 import QtCore
 
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QComboBox, QTextBrowser, QScrollBar, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QComboBox, QTextBrowser, QScrollBar, QHBoxLayout, QVBoxLayout, QAction
 from PyQt5.QtGui import QFont
 
 import pywinusb.hid as hid
@@ -278,10 +278,33 @@ class App(QMainWindow):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
+        mainMenu = self.menuBar() 
+
+        fileMenu   = mainMenu.addMenu('File')
+        helpMenu   = mainMenu.addMenu('Help')
+
+        scanButton = QAction('Scan', self)
+        scanButton.setShortcut('Ctrl+S')
+        scanButton.setStatusTip('Scan devices')
+        scanButton.triggered.connect(self.close)
+        fileMenu.addAction(scanButton)
+
+        exitButton = QAction('Exit', self)
+        exitButton.setShortcut('Ctrl+Q')
+        exitButton.setStatusTip('Exit application')
+        exitButton.triggered.connect(self.close)
+        fileMenu.addAction(exitButton)
+
+        aboutButton = QAction('About', self)
+        aboutButton.setShortcut('Ctrl+A')
+        aboutButton.setStatusTip('About application')
+        aboutButton.triggered.connect(self.close)
+        helpMenu.addAction(aboutButton)
+
         self.widget = MainWidget()
         self.setCentralWidget(self.widget)
 
-        self.statusBar().showMessage('Message in statusbar.')
+        # self.statusBar().showMessage('Message in statusbar.')
         self.show()
 
 if __name__ == '__main__':
