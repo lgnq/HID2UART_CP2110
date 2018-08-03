@@ -6,7 +6,7 @@ import queue
 
 from PyQt5 import QtCore
 
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QComboBox, QTextBrowser, QScrollBar, QHBoxLayout, QVBoxLayout, QAction
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QComboBox, QTextBrowser, QScrollBar, QHBoxLayout, QVBoxLayout, QAction, QMessageBox
 from PyQt5.QtGui import QFont
 
 import pywinusb.hid as hid
@@ -298,7 +298,7 @@ class App(QMainWindow):
         aboutButton = QAction('About', self)
         aboutButton.setShortcut('Ctrl+A')
         aboutButton.setStatusTip('About application')
-        aboutButton.triggered.connect(self.close)
+        aboutButton.triggered.connect(self.about)
         helpMenu.addAction(aboutButton)
 
         self.widget = MainWidget()
@@ -306,6 +306,9 @@ class App(QMainWindow):
 
         # self.statusBar().showMessage('Message in statusbar.')
         self.show()
+
+    def about(self):
+        buttonReply = QMessageBox.question(self, 'About', "CP2110 USB-to-UART\r\nVersion: 1.0\r\nAuthor: lgnq", QMessageBox.Ok, QMessageBox.Ok)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
