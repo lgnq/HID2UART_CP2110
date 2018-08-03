@@ -42,48 +42,48 @@ class MainWidget(QWidget):
         self.queue = queue.Queue()  #创建队列
         
         self.device_label = QLabel("Device List:")
-        self.device_list = QComboBox()  #下拉列表
+        self.device_combobox = QComboBox()  #下拉列表
 
         self.baudrate_label = QLabel("Baudrate:")
-        self.baudrate_list = QComboBox()
-        self.baudrate_list.addItem("9600")
-        self.baudrate_list.addItem("38400")
-        self.baudrate_list.addItem("115200")
-        self.baudrate_list.currentIndexChanged.connect(self.baudrate_change)
+        self.baudrate_combobox = QComboBox()
+        self.baudrate_combobox.addItem("9600")
+        self.baudrate_combobox.addItem("38400")
+        self.baudrate_combobox.addItem("115200")
+        self.baudrate_combobox.currentIndexChanged.connect(self.baudrate_change)
 
-        self.openButton = QPushButton("Open")
-        # self.openButton.setToolTip('Open/Close the CP2110')
-        self.openButton.clicked.connect(self.device_open)
+        self.open_pushbutton = QPushButton("Open")
+        # self.open_pushbutton.setToolTip('Open/Close the CP2110')
+        self.open_pushbutton.clicked.connect(self.device_open)
         
-        self.rxClear = QPushButton("Clear")
-        self.rxClear.clicked.connect(self.clearRxBrowser)
+        self.clear_pushbutton = QPushButton("Clear")
+        self.clear_pushbutton.clicked.connect(self.clearRxBrowser)
 
         layout_list = QHBoxLayout()
 
         layout_list.addWidget(self.device_label)
-        layout_list.addWidget(self.device_list)
+        layout_list.addWidget(self.device_combobox)
         layout_list.addWidget(self.baudrate_label)
-        layout_list.addWidget(self.baudrate_list)
-        layout_list.addWidget(self.openButton)
-        layout_list.addWidget(self.rxClear)
+        layout_list.addWidget(self.baudrate_combobox)
+        layout_list.addWidget(self.open_pushbutton)
+        layout_list.addWidget(self.clear_pushbutton)
 
         layout_list.addStretch()
         
-        self.rxLine = QTextBrowser()
-        self.rxLine.setFont(QFont("Consolas", 10))
-        # self.rxLine.setFont(QFont("Courier New", 10))
+        self.rx_textbrowser = QTextBrowser()
+        self.rx_textbrowser.setFont(QFont("Consolas", 10))
+        # self.rx_textbrowser.setFont(QFont("Courier New", 10))
 
         self.bar    = QScrollBar()
-        self.bar    = self.rxLine.verticalScrollBar()
+        self.bar    = self.rx_textbrowser.verticalScrollBar()
         self.bar.setValue(self.bar.maximum());
 
-        self.inputTips = QLabel("Info:")
+        self.status_label = QLabel("Info:")
         
         layout = QVBoxLayout()
 
         layout.addLayout(layout_list)
-        layout.addWidget(self.rxLine)
-        layout.addWidget(self.inputTips)
+        layout.addWidget(self.rx_textbrowser)
+        layout.addWidget(self.status_label)
         
         self.setLayout(layout)
 
@@ -92,12 +92,12 @@ class MainWidget(QWidget):
 
         for i in self.all_devices:
             id_information = "vId= 0x{0:04X}, pId= 0x{1:04X}, ppId= 0x{2:04X}".format(i.vendor_id, i.product_id, i.parent_instance_id)
-            self.device_list.addItem(id_information)
+            self.device_combobox.addItem(id_information)
 
         if self.all_devices:
             self.HIDDevice = self.all_devices[self.currentDevice]
             
-        self.device_list.currentIndexChanged.connect(self.device_change)
+        self.device_combobox.currentIndexChanged.connect(self.device_change)
         
         self.thread = Thread(self.queue_monitor)
         self.thread.msg_ready.connect(self.rxTextBrowserUpdate)
@@ -116,7 +116,7 @@ class MainWidget(QWidget):
     def rxTextBrowserUpdate(self, item):
         if (item[0] == 1):
             if (item[1] == 10):
-                self.rxLine.append(self.string)
+                self.rx_textbrowser.append(self.string)
                 self.bar.setValue(self.bar.maximum())
                 self.string = ""
             elif (item[1] != 13):    
@@ -126,35 +126,35 @@ class MainWidget(QWidget):
         self.queue.put(data)
         
     def clearRxBrowser(self):
-        self.rxLine.clear()
+        self.rx_textbrowser.clear()
         
     def closeEvent(self, event):
         print("Close event")
         self.HIDDevice.close()
 
     def baudrate_change(self):
-        if self.device_list.count() == 0:
-            self.inputTips.setText("Info: " + "no CP2110 device detected!")
+        if self.device_combobox.count() == 0:
+            self.status_label.setText("Info: " + "no CP2110 device detected!")
             return
 
         if (self.HIDDevice.is_opened()):
-            self.uart_config(self.baudrate_list.currentIndex())
+            self.uart_config(self.baudrate_combobox.currentIndex())
 
     def device_change(self):
-        if self.device_list.count() == 0:
-            self.inputTips.setText("Info: " + "no CP2110 device detected!")
+        if self.device_combobox.count() == 0:
+            self.status_label.setText("Info: " + "no CP2110 device detected!")
             return
 
-        self.currentDevice = self.device_list.currentIndex() #获取当前设备索引号
+        self.currentDevice = self.device_combobox.currentIndex() #获取当前设备索引号
         
         if self.previewDevice != self.currentDevice:
-            self.openButton.setText("Open")
-            self.inputTips.setText("Info: ")
+            self.open_pushbutton.setText("Open")
+            self.status_label.setText("Info: ")
         else: 
             if self.HIDDevice.is_opened():
-                self.openButton.setText("Close")
+                self.open_pushbutton.setText("Close")
             else:
-                self.openButton.setText("Open")
+                self.open_pushbutton.setText("Open")
 
     def uart_onoff(self, onoff):
         buff    = [0x00] * 64
@@ -200,8 +200,8 @@ class MainWidget(QWidget):
         self.HIDDevice.send_feature_report(buff)
 
     def device_open(self):
-        if self.device_list.count() == 0:
-            self.inputTips.setText("Info: " + "no CP2110 device detected!")
+        if self.device_combobox.count() == 0:
+            self.status_label.setText("Info: " + "no CP2110 device detected!")
             return
 
         # 与之前选择的设备相同 
@@ -209,9 +209,9 @@ class MainWidget(QWidget):
             if self.HIDDevice.is_opened():
                 self.HIDDevice.close()
                 self.out_reports_id_list = []
-                self.openButton.setText("Open")
+                self.open_pushbutton.setText("Open")
                 print(self.HIDDevice, "Closed")
-                self.inputTips.setText("Info: ")
+                self.status_label.setText("Info: ")
             else:
                 self.HIDDevice.open()
                 self.HIDDevice.set_raw_data_handler(self.report_recv_handler)
@@ -220,7 +220,7 @@ class MainWidget(QWidget):
                 # in_reports   = self.HIDDevice.find_input_reports()
 
                 self.uart_onoff(1)
-                self.uart_config(self.baudrate_list.currentIndex())
+                self.uart_config(self.baudrate_combobox.currentIndex())
 
                 # for i in self.feature_report:
                 #     print(i.get(False))
@@ -228,10 +228,10 @@ class MainWidget(QWidget):
                 for i in self.reports:
                     self.out_reports_id_list.append(i.report_id)
                 
-                self.inputTips.setText("Info: " + self.HIDDevice.product_name + " " + self.HIDDevice.vendor_name + " " + self.HIDDevice.serial_number)
+                self.status_label.setText("Info: " + self.HIDDevice.product_name + " " + self.HIDDevice.vendor_name + " " + self.HIDDevice.serial_number)
                 print(self.HIDDevice, "opend")
                 
-                self.openButton.setText("Close")
+                self.open_pushbutton.setText("Close")
         else:
             self.HIDDevice.close()
             self.out_reports_id_list = []
@@ -248,7 +248,7 @@ class MainWidget(QWidget):
             # in_reports   = self.HIDDevice.find_input_reports()
             
             self.uart_onoff(1)
-            self.uart_config(self.baudrate_list.currentIndex())
+            self.uart_config(self.baudrate_combobox.currentIndex())
 
             # for i in self.feature_report:
             #     print(i)
@@ -257,9 +257,9 @@ class MainWidget(QWidget):
             for i in self.reports:
                 self.out_reports_id_list.append(i.report_id)
 
-            self.inputTips.setText("Info: " + self.HIDDevice.product_name + " " + self.HIDDevice.vendor_name + " " + self.HIDDevice.serial_number)
+            self.status_label.setText("Info: " + self.HIDDevice.product_name + " " + self.HIDDevice.vendor_name + " " + self.HIDDevice.serial_number)
 
-            self.openButton.setText("Close")
+            self.open_pushbutton.setText("Close")
 
 class App(QMainWindow):
     def __init__(self):
