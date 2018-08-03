@@ -1,18 +1,15 @@
-﻿# coding:utf-8
+# coding:utf-8
 #/usr/bin/python
 
 import sys
 import queue
 
-import PyQt5
 from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QComboBox, QTextBrowser, QScrollBar, QHBoxLayout, QVBoxLayout
+
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QComboBox, QTextBrowser, QScrollBar, QHBoxLayout, QVBoxLayout
 from PyQt5.QtGui import QFont
 
 import pywinusb.hid as hid
-
-# hid_device.vendor_id, hid_device.product_id
 
 class Thread(QtCore.QThread):
     msg_ready = QtCore.pyqtSignal(list)
@@ -31,7 +28,7 @@ class Thread(QtCore.QThread):
                     msg.append(i)
 
                 self.msg_ready.emit(msg)
-            
+
 class MainWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -55,6 +52,7 @@ class MainWidget(QWidget):
         self.baudrate_list.currentIndexChanged.connect(self.baudrate_change)
 
         self.openButton = QPushButton("Open")
+        # self.openButton.setToolTip('Open/Close the CP2110')
         self.openButton.clicked.connect(self.device_open)
         
         self.rxClear = QPushButton("Clear")
@@ -263,14 +261,33 @@ class MainWidget(QWidget):
 
             self.openButton.setText("Close")
 
+class App(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.title = 'CP2110 HID USB-to-UART'
+        
+        self.left   = 400
+        self.top    = 300
+        self.width  = 800
+        self.height = 600
+        
+        self.initUI()
+ 
+    def initUI(self):
+        self.setWindowTitle(self.title)
+        self.setGeometry(self.left, self.top, self.width, self.height)
+
+        self.widget = MainWidget()
+        self.setCentralWidget(self.widget)
+
+        self.statusBar().showMessage('Message in statusbar.')
+        self.show()
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    widget = MainWidget()
-
-    widget.setWindowTitle("CP2110 HID USB-to-UART")
-    widget.setGeometry(400, 300, 800, 600)
-    widget.show()
-
+    ex = App()
+    
     sys.exit(app.exec_())
     
